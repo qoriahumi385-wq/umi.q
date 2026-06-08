@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umi Qoriah · Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#e8c98a;--gold2:#c8a96e;--rose:#c9847a;--teal:#7a9e8a;
+  --bg:#010612;--bg2:#04122e;--fg:#f5f0e8;--fg2:rgba(245,240,232,.6);
+  --border:rgba(232,201,138,.12);--border2:rgba(232,201,138,.22);
+}
+html,body{height:100%;overflow-x:hidden;}
+body{background:var(--bg);color:var(--fg);font-family:'DM Mono',monospace;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(1,6,18,.88);backdrop-filter:blur(12px);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:2px;color:var(--gold);}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg2);text-decoration:none;cursor:pointer;transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-tab{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fg2);cursor:pointer;transition:color .2s;padding:6px 14px;border:1px solid var(--border);border-radius:2px;}
+.nav-tab:hover,.nav-tab.active{color:var(--gold);border-color:var(--gold2);}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:60px;}
+.page.active{display:block;}
+
+/* ============ PORTFOLIO PAGE ============ */
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+#silk{z-index:0;}
+#dust{z-index:1;}
+
+/* CURSOR */
+#c-dot,#c-ring{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#c-dot{width:6px;height:6px;background:var(--gold);transition:width .1s,height .1s;}
+#c-ring{width:32px;height:32px;border:1.5px solid rgba(232,201,138,.4);transition:width .25s,height .25s,border-color .25s;}
+
+/* HERO */
+.hero{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 40px;}
+.hero-inner{display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;max-width:1100px;width:100%;}
+
+/* ORBIT SYSTEM */
+.orbit-system{position:relative;width:420px;height:420px;flex-shrink:0;}
+.orbit-ring{position:absolute;border-radius:50%;border:1px solid var(--border);}
+.orbit-ring-1{inset:24px;} /* tightest */
+.orbit-ring-2{inset:0;}    /* outer */
+
+/* Profile circle */
+.profile-circle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;overflow:hidden;border:3px solid var(--gold2);box-shadow:0 0 40px rgba(232,201,138,.2),0 0 80px rgba(232,201,138,.08);}
+.profile-circle img{width:100%;height:100%;object-fit:cover;object-position:center top;}
+
+/* Orbiting items */
+.orb-item{position:absolute;width:56px;height:56px;border-radius:50%;background:rgba(19,17,9,.9);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:transform .2s,border-color .2s;transform-origin:center;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.orb-item:hover{border-color:var(--gold);transform:translate(-50%,-50%) scale(1.15) !important;}
+.orb-item span{pointer-events:none;}
+
+/* HERO TEXT */
+.hero-text{z-index:10;}
+.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,5vw,72px);font-weight:300;line-height:1.05;margin-bottom:8px;}
+.hero-name em{font-style:italic;color:var(--gold);}
+.hero-role{font-size:12px;letter-spacing:2px;color:var(--fg2);margin-bottom:28px;text-transform:uppercase;}
+.hero-desc{font-size:13px;line-height:1.8;color:var(--fg2);max-width:400px;margin-bottom:36px;font-family:'Cormorant Garamond',serif;font-size:16px;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{padding:12px 28px;background:var(--gold2);color:var(--bg);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;border:none;cursor:pointer;border-radius:2px;transition:background .2s;}
+.btn-primary:hover{background:var(--gold);}
+.btn-ghost{padding:12px 28px;background:transparent;color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;border:1px solid var(--border2);cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--fg);}
+
+/* CARDS SECTION */
+.section{position:relative;z-index:10;padding:60px 40px;max-width:1100px;margin:0 auto;}
+.sec-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:32px;}
+.cards-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+.card{background:rgba(19,17,9,.7);border:1px solid var(--border);border-radius:6px;padding:20px 16px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(4px);}
+.card:hover{border-color:var(--gold2);background:rgba(25,22,12,.9);transform:translateY(-3px);}
+.card-icon{font-size:28px;margin-bottom:12px;}
+.card-title{font-size:12px;font-weight:500;color:var(--fg);margin-bottom:6px;letter-spacing:.3px;}
+.card-desc{font-size:10.5px;color:var(--fg2);line-height:1.6;}
+
+/* MODAL */
+.mo{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.mo.active{opacity:1;pointer-events:all;}
+.md{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:32px;max-width:640px;width:90%;max-height:85vh;overflow-y:auto;position:relative;}
+.md::-webkit-scrollbar{width:3px;}
+.md::-webkit-scrollbar-thumb{background:var(--border2);}
+.mc{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--fg2);font-size:18px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:color .2s,background .2s;}
+.mc:hover{color:var(--fg);background:rgba(232,201,138,.08);}
+.md h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--gold);margin-bottom:24px;}
+.ec{display:flex;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.ec:last-of-type{border-bottom:none;}
+.ico{font-size:24px;flex-shrink:0;margin-top:2px;}
+.ec strong{display:block;font-size:14px;margin-bottom:2px;}
+.ec small{font-size:10px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;}
+.ec p{font-size:12px;color:var(--fg2);line-height:1.7;}
+.sl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin:20px 0 12px;}
+.bdg{display:inline-block;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;font-size:10px;letter-spacing:1px;margin:3px;color:var(--fg2);}
+.pc{background:rgba(232,201,138,.04);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;}
+.pc h3{font-size:13px;margin-bottom:8px;color:var(--fg);}
+.pc p{font-size:12px;color:var(--fg2);line-height:1.7;}
+
+/* GALLERY GRID */
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.gs{border-radius:8px;overflow:hidden;border:1px solid var(--border);aspect-ratio:4/3;position:relative;cursor:pointer;group:hover;}
+.gs img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.gs:hover img{transform:scale(1.05);}
+.gs span{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:var(--fg2);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:20px 10px 8px;text-align:center;}
+
+/* CONTACT */
+.cr{display:flex;align-items:center;gap:14px;padding:16px;background:rgba(232,201,138,.03);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;text-decoration:none;color:var(--fg);transition:border-color .2s,background .2s;}
+.cr:hover{border-color:var(--gold2);background:rgba(232,201,138,.06);}
+.ci{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ci.wa{background:rgba(37,211,102,.12);}
+.ci.em{background:rgba(234,67,53,.12);}
+.ci-info{flex:1;}
+.ci-info strong{display:block;font-size:13px;margin-bottom:2px;}
+.ci-info span{font-size:11px;color:var(--fg2);}
+
+/* ============ POS PAGE ============ */
+#page-kasir{background:#0f0f0f;color:#f5f0e8;}
+.pos-grid{display:grid;grid-template-columns:1fr 340px;grid-template-rows:auto 1fr;height:100vh;}
+.pos-header{grid-column:1/-1;padding:24px 32px 20px;border-bottom:1px solid #2a2a2a;display:flex;align-items:baseline;gap:16px;}
+.pos-header-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#f5f0e8;letter-spacing:-.5px;}
+.pos-header-sub{font-size:11px;color:#555;letter-spacing:3px;text-transform:uppercase;}
+.pos-badge{margin-left:auto;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c8a96e;border:1px solid #c8a96e44;padding:4px 10px;border-radius:2px;}
+.products-panel{padding:24px 32px;overflow-y:auto;border-right:1px solid #2a2a2a;}
+.sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:16px;}
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.product-card{background:#181818;border:1px solid #222;border-radius:4px;padding:16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.product-card:hover{border-color:#c8a96e;background:#1e1a14;}
+.product-card:active{transform:scale(.98);}
+.pe{font-size:32px;display:block;margin-bottom:10px;}
+.pn{font-size:12px;font-weight:500;color:#ddd;margin-bottom:4px;}
+.pp{font-size:11px;color:#c8a96e;}
+.add-hint{position:absolute;bottom:0;left:0;right:0;background:#c8a96e;color:#0f0f0f;text-align:center;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:6px;opacity:0;transition:opacity .15s;font-weight:500;}
+.product-card:hover .add-hint{opacity:1;}
+.cart-panel{display:flex;flex-direction:column;padding:24px 20px;background:#111;}
+.cart-items{flex:1;overflow-y:auto;margin-bottom:16px;}
+.cart-empty{color:#333;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-top:40px;}
+.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #1e1e1e;}
+.ci-name{flex:1;}
+.ci-n{font-size:12px;color:#ccc;}
+.ci-s{font-size:10px;color:#444;margin-top:2px;}
+.qty-ctrl{display:flex;align-items:center;gap:6px;}
+.qty-btn{width:22px;height:22px;border-radius:2px;border:1px solid #333;background:#1a1a1a;color:#aaa;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .1s;}
+.qty-btn:hover{border-color:#c8a96e;color:#c8a96e;}
+.qty-num{font-size:13px;font-weight:500;min-width:18px;text-align:center;color:#f5f0e8;}
+.ci-total{font-size:11px;color:#c8a96e;min-width:80px;text-align:right;}
+.cart-footer{border-top:1px solid #2a2a2a;padding-top:16px;}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
+.total-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;}
+.total-value{font-family:'Playfair Display',serif;font-size:22px;color:#f5f0e8;}
+.input-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:6px;display:block;}
+.money-input{width:100%;background:#181818;border:1px solid #2a2a2a;border-radius:3px;color:#f5f0e8;font-family:'DM Mono',monospace;font-size:14px;padding:10px 12px;outline:none;transition:border-color .15s;margin-bottom:10px;}
+.money-input:focus{border-color:#c8a96e;}
+.change-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;margin-bottom:14px;}
+.change-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;}
+.save-btn{width:100%;padding:14px;border:none;border-radius:3px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:all .2s;}
+.save-btn.can{background:#c8a96e;color:#0f0f0f;}
+.save-btn.cant{background:#1a1a1a;color:#333;cursor:not-allowed;}
+.save-btn.can:hover{background:#d4b87c;}
+.success-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#6dbb8a;color:#0a2012;padding:12px 28px;border-radius:3px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;animation:fadeInOut 2.5s ease forwards;z-index:9999;}
+@keyframes fadeInOut{0%{opacity:0;top:16px;}15%{opacity:1;top:24px;}75%{opacity:1;}100%{opacity:0;}}
+.cart-count{display:inline-flex;align-items:center;justify-content:center;background:#c8a96e;color:#0f0f0f;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:500;margin-left:6px;vertical-align:middle;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div id="c-dot"></div>
+<div id="c-ring"></div>
+<canvas id="silk"></canvas>
+<canvas id="dust"></canvas>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">Umi Qoriah</span>
+  <div class="nav-links">
+    <a onclick="showPage('portfolio')">Portfolio</a>
+    <a onclick="showPage('kasir')">Kasir Toko</a>
+  </div>
+</nav>
+
+<!-- ===== PORTFOLIO PAGE ===== -->
+<div id="page-portfolio" class="page active">
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hero-eyebrow">✦ Mahasiswi Sistem Informasi</p>
+      <h1 class="hero-name">Umi<br><em>Qoriah</em></h1>
+      <p class="hero-role">UNIKMA Cilacap · S1 Sistem Informasi</p>
+      <p class="hero-desc">Mendalami pemrograman, desain sistem, dan kecerdasan buatan — dengan semangat untuk terus tumbuh dan berkarya.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="openModal('kontak')">Hubungi Saya</button>
+        <button class="btn-ghost" onclick="openModal('proyek')">Lihat Proyek</button>
+      </div>
+    </div>
+
+    <!-- ORBIT -->
+    <div class="orbit-system" id="orbitSystem">
+      <div class="orbit-ring orbit-ring-1"></div>
+      <div class="orbit-ring orbit-ring-2"></div>
+      <div class="profile-circle">
+        <img id="profileImg" src="" alt="Umi Qoriah">
+      </div>
+      <div class="orb-item" id="ob0" onclick="openModal('edu')" title="Pendidikan"><span>🎓</span></div>
+      <div class="orb-item" id="ob1" onclick="openModal('proyek')" title="Proyek"><span>💻</span></div>
+      <div class="orb-item" id="ob2" onclick="openModal('gallery')" title="Galeri"><span>🏆</span></div>
+      <div class="orb-item" id="ob3" onclick="openModal('kontak')" title="Kontak"><span>📱</span></div>
+      <div class="orb-item" id="ob4" onclick="openModal('sertif')" title="Sertifikat"><span>📜</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MENU CARDS -->
+<div class="section">
+  <p class="sec-label">✦ Jelajahi</p>
+  <h2 class="sec-title">Semua Tentang Saya</h2>
+  <div class="cards-grid">
+    <div class="card" onclick="openModal('edu')"><div class="card-icon">🎓</div><div class="card-title">Pendidikan</div><div class="card-desc">Perjalanan akademik dari SD hingga Universitas.</div></div>
+    <div class="card" onclick="openModal('proyek')"><div class="card-icon">💻</div><div class="card-title">Proyek</div><div class="card-desc">Karya-karya digital yang dibangun selama kuliah.</div></div>
+    <div class="card" onclick="openModal('gallery')"><div class="card-icon">🏅</div><div class="card-title">Prestasi</div><div class="card-desc">Pencapaian olahraga dan kegiatan kampus.</div></div>
+    <div class="card" onclick="openModal('sertif')"><div class="card-icon">📜</div><div class="card-title">Sertifikat</div><div class="card-desc">Penghargaan dan sertifikasi resmi yang diperoleh.</div></div>
+    <div class="card" onclick="openModal('kontak')"><div class="card-icon">✉️</div><div class="card-title">Kontak</div><div class="card-desc">Ayo terhubung dan berkolaborasi bersama.</div></div>
+  </div>
+</div>
+</div><!-- end portfolio page -->
+
+<!-- ===== POS PAGE ===== -->
+<div id="page-kasir" class="page">
+  <div class="pos-grid">
+    <header class="pos-header">
+      <span class="pos-header-title">Kasir</span>
+      <span class="pos-header-sub">Toko Sepatu</span>
+      <span class="pos-badge">POS v1.0</span>
+    </header>
+    <main class="products-panel">
+      <p class="sec-lbl">Pilih Produk</p>
+      <div class="product-grid" id="productGrid"></div>
+    </main>
+    <aside class="cart-panel">
+      <p class="sec-lbl" id="cartLabel">Keranjang</p>
+      <div class="cart-items" id="cartItems"><p class="cart-empty">Keranjang kosong</p></div>
+      <div class="cart-footer">
+        <div class="total-row">
+          <span class="total-label">Total</span>
+          <span class="total-value" id="totalVal">Rp 0</span>
+        </div>
+        <label class="input-lbl">Uang Pembayaran</label>
+        <input class="money-input" type="number" placeholder="0" id="paidInput" oninput="updateChange()">
+        <div class="change-row">
+          <span class="change-label">Kembalian</span>
+          <span id="changeVal" style="font-size:14px;font-weight:500;color:#555;">—</span>
+        </div>
+        <button class="save-btn cant" id="saveBtn" onclick="saveTransaction()">Simpan Transaksi</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+<div class="mo" id="modal-edu">
+  <div class="md">
+    <button class="mc" onclick="closeModal('edu')">✕</button>
+    <h2>✦ Pendidikan</h2>
+    <div class="ec"><div class="ico">🏫</div><div><strong>SD Negeri 06</strong><small>Sekolah Dasar · Jenjang Pertama</small><p>Sekolah Dasar yang pertama kali saya awali untuk membentuk fondasi dan karakter belajar. Lingkungan yang hangat membentuk nilai kedisiplinan dan kemandirian.</p></div></div>
+    <div class="ec"><div class="ico">📗</div><div><strong>SMP AL-HIDAYAH Sidareja</strong><small>Sekolah Menengah Pertama · Sidareja</small><p>Selama tiga tahun saya belajar, tumbuh, dan menjadi lebih baik bersama. Penuh semangat, rasa ingin tahu, dan kebersamaan yang hingga kini masih saya jaga erat.</p></div></div>
+    <div class="ec"><div class="ico">🎒</div><div><strong>SMAN 1 Kedungreja</strong><small>Sekolah Menengah Atas · Kedungreja</small><p>Di jenjang ini saya menjelajahi ilmu lebih dalam, mengembangkan potensi, dan mulai membentuk visi masa depan dengan penuh semangat dan keberanian.</p></div></div>
+    <div class="ec"><div class="ico">💻</div><div><strong>Universitas Komputama (UNIKMA) Cilacap</strong><small>S1 Sistem Informasi · Mahasiswi Aktif</small><p>Saat ini menempuh studi Sarjana di Prodi Sistem Informasi UNIKMA Cilacap. Mendalami pemrograman, analisis sistem, basis data, rekayasa perangkat lunak, dan kecerdasan buatan.</p></div></div>
+    <div class="sl">Mata Kuliah Favorit</div>
+    <div><span class="bdg">Basis Data</span><span class="bdg">Pemrograman Web</span><span class="bdg">Analisis Sistem</span><span class="bdg">Kecerdasan Buatan</span><span class="bdg">UI/UX Design</span></div>
+  </div>
+</div>
+
+<div class="mo" id="modal-proyek">
+  <div class="md">
+    <button class="mc" onclick="closeModal('proyek')">✕</button>
+    <h2>✦ Proyek</h2>
+    <p style="color:rgba(245,240,232,.38);font-size:12px;margin-bottom:14px;">Proyek yang dikerjakan selama studi di UNIKMA Cilacap.</p>
+    <div class="pc"><h3>🏆 Sistem Informasi Jadwal Olahraga Sekolah</h3><p>Aplikasi web pengelola jadwal latihan, hasil pertandingan, dan data atlet. Dibangun dengan PHP, MySQL, dan Bootstrap.</p></div>
+    <div class="pc"><h3>📊 Das
